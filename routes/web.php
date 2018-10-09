@@ -11,6 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//NOTE: This is 302 because we might want to add a welcome page at some point
+Route::redirect('/', '/poll', 302);
+
+Route::get('/poll', 'PollController');
+
+Route::post('/poll', 'PollController@create');
+
+Route::get('/poll/{poll}', 'PollController@view');
+Route::patch('/poll/{poll}', 'PollController@edit');
+
+Route::post('/poll/{poll}/vote', 'PollController@vote');
+
+Route::get('/poll/{poll}/edit', 'PollController@admin');
