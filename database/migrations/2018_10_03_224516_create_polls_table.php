@@ -16,8 +16,8 @@ class CreatePollsTable extends Migration
         Schema::create('polls', function (Blueprint $table) {
             $table->char('id', 6);
             $table->string('question');
-            $table->enum('type', ['cookies', 'codes']);
-            $table->boolean('multiple_answers_allowed');
+            $table->enum('duplicate_vote_checking', ['none', 'cookies', 'codes']);
+            $table->boolean('allow_multiple_answers');
             $table->timestamp('created_at');
             $table->timestamp('closes_at')->nullable();
             $table->string('admin_password')->nullable();
