@@ -18,6 +18,7 @@ class CreatePollsTable extends Migration
             $table->string('question');
             $table->enum('duplicate_vote_checking', ['none', 'cookies', 'codes']);
             $table->boolean('allow_multiple_answers');
+            $table->boolean('hide_results_until_closed');
             $table->timestamp('created_at');
             $table->timestamp('closes_at')->nullable();
             $table->string('admin_password')->nullable();

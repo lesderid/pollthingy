@@ -6,6 +6,8 @@
     <form action="{{ action('PollController@create') }}" method="post">
         @csrf
 
+        <!-- TODO: Get rid of <br>s -->
+
         <section class="grid grid--large">
             <div class="textfield">
                 <input type="text" class="question" name="question" placeholder="Type your question here" required>
@@ -36,13 +38,18 @@
                 </label>
                 <br>
                 <label class="checkbox no-bottom-margin">
+                    <input type="checkbox" name="hide_results_until_closed">
+                    <span class="checkbox__label">Hide results until poll is closed</span>
+                </label>
+                <br>
+                <label class="checkbox no-bottom-margin">
                     <input type="checkbox" name="automatically_close_poll">
                     <span class="checkbox__label">Automatically close poll at </span>
                     <input type="datetime-local" name="automatically_close_poll_datetime" class="inline-block" value="{{ Carbon\Carbon::now()->addHour()->format('Y-m-d\TH:i') }}" min="{{ Carbon\Carbon::now()->format('Y-m-d\TH:i') }}">
                 </label>
                 <br>
                 <label class="checkbox no-bottom-margin">
-                    <input type="checkbox" name="set_admin_password" checked=off>
+                    <input type="checkbox" name="set_admin_password">
                     <span class="checkbox__label">Set an admin password: </span>
                     <input type="text" name="admin_password" class="inline-text">
                     <span class="post-input-label"></span>
