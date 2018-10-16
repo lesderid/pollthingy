@@ -19,13 +19,13 @@
         @for ($i = 0; $i < 5; $i++)
         <section class="grid grid--large">
             <div class="textfield">
-                <input type="text" class="option" name="option[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+                <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
             </div>
             <div class="textfield">
-                <input type="text" class="option" name="option[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+                <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
             </div>
             <div class="textfield">
-                <input type="text" class="option" name="option[]" placeholder="Enter a poll option">
+                <input type="text" class="option" name="options[]" placeholder="Enter a poll option">
             </div>
         </section>
         @endfor
@@ -33,7 +33,7 @@
         <section class="grid grid--large">
             <div class="some-top-margin">
                 <label class="checkbox no-bottom-margin">
-                    <input type="checkbox" name="multiple_answers_allowed">
+                    <input type="checkbox" name="allow_multiple_answers">
                     <span class="checkbox__label">Allow multiple answers</span>
                 </label>
                 <br>

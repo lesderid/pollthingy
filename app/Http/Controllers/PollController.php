@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Carbon\Carbon;
+use Validator;
 
 use App\Poll;
 
@@ -17,35 +17,67 @@ class PollController extends Controller
 
     public function create(Request $request)
     {
+        if($request->has('options')) {
+            $request['options'] = array_filter($request->input('options'), function($i) { return $i !== null; });
+        }
+
+        $request['allow_multiple_answers'] = $request->has('allow_multiple_answers');
+        $request['hide_results_until_closed'] = $request->has('hide_results_until_closed');
+        $request['automatically_close_poll'] = $request->has('automatically_close_poll');
+        $request['set_admin_password'] = $request->has('set_admin_password');
+
         $validatedInput = $request->validate([
             'question' => 'required|string',
-            'option' => 'required|min:3|distinct'
-
-            /*
-                question: Are traps gay?
-                option[]: Yes
-                option[]: No
-                multiple_answers_allowed: on
-                hide_results_until_closed: on
-                automatically_close_poll: on
-                automatically_close_poll_datetime: 2018-10-12T18:45
-                set_admin_password: on
-                admin_password: sadasdasdasdasdas
-                duplicate_vote_checking: codes
-                number_of_codes: 10
-             */
+            'options' => 'required|min:2|distinct',
+            'allow_multiple_answers' => 'required|boolean',
+            'hide_results_until_closed' => 'required|boolean',
+            'automatically_close_poll' => 'required|boolean',
+            'automatically_close_poll_datetime' => 'required_if:automatically_close_poll,true|date|after:now',
+            'set_admin_password' => 'required|boolean',
+            'admin_password' => 'required_if:set_admin_password,true|nullable|string',
+            'duplicate_vote_checking' => 'required|in:none,cookies,codes',
+            'number_of_codes' => 'required_if:duplicate_vote_checking,codes|integer|min:2'
         ]);
 
-        debug($validatedInput);
-
         $poll = new Poll;
+        $poll->question = $validatedInput['question'];
+        $poll->duplicate_vote_checking = $validatedInput['duplicate_vote_checking'];
+        $poll->allow_multiple_answers = $validatedInput['allow_multiple_answers'];
+        $poll->hide_results_until_closed = $validatedInput['hide_results_until_closed'];
         $poll->created_at = Carbon::now();
+        if($validatedInput['automatically_close_poll']) {
+            $poll->closes_at = Carbon::parse($validatedInput['automatically_close_poll_datetime']);
+        }
+        if($validatedInput['set_admin_password']) {
+            $poll->admin_password = $validatedInput['admin_password'];
+        }
+        $poll->save();
 
-        return view('create_poll');
+        $poll->options()->createMany(array_map(function($i) { return ['text' => $i]; }, $validatedInput['options']));
+        $poll->save();
+
+        if($poll->duplicate_vote_checking == 'codes') {
+            $codes = $poll->createVotingCodes($validatedInput['number_of_codes']);
+        }
+
+        return redirect()->action('PollController@view', ['poll' => $poll])->with('new', true);
     }
 
     public function view(Request $request, Poll $poll)
     {
+        $new = $request->session()->pull('new', false);
+
+        if($request->format() == 'json') {
+            if($new) {
+
+            } else {
+
+            }
+
+            return null; //TODO: Implement JSON output
+        } else {
+            return view('view_poll')->with('poll', $poll)->with('new', $new);
+        }
     }
 
     public function vote(Request $request, Poll $poll)

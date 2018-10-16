@@ -6,23 +6,54 @@ use Illuminate\Database\Eloquent\Model;
 
 class Poll extends Model
 {
+    public $timestamps = false;
+
+    public $keyType = "string";
+
     public function __construct()
     {
         parent::__construct();
 
-        $this->id = Poll::create_id();
+        $this->id = Poll::createId();
     }
 
-    private static function create_id()
+    private static function createId()
     {
         //TODO: Check if id is unique
 
-		$characters = 'abcdefghijklmnopqrstuvwxyz';
-		$id = '';
-		for($i = 0; $i < 6; $i++)
-		{
-			$id .= $characters[rand(0, strlen($characters) - 1)];
-		}
-		return $id;
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $id = '';
+        for($i = 0; $i < 6; $i++) {
+            $id .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $id;
+    }
+
+    public function options()
+    {
+        return $this->hasMany('App\PollOption');
+    }
+
+    public function votes()
+    {
+        return $this->hasMany('App\PollVote');
+    }
+
+    public function voting_codes()
+    {
+        return $this->hasMany('App\PollVotingCode');
+
+    }
+
+    public function createVotingCodes($n)
+    {
+        $codes = [];
+        for($i = 0; $i < $n; $i++) {
+            $codes[] = new PollVotingCode;
+        }
+
+        $this->voting_codes()->saveMany($codes);
+
+        return $codes;
     }
 }
