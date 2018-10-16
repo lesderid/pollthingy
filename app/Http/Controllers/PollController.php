@@ -74,7 +74,8 @@ class PollController extends Controller
 
             }
 
-            return null; //TODO: Implement JSON output
+            //TODO: Implement JSON output
+            return null;
         } else {
             return view('view_poll')->with('poll', $poll)->with('new', $new);
         }
