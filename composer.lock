@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a875862ccc0c27fcee12c6892c3e2b32",
+    "content-hash": "88c4c6682a40e4d392c06df35c52baf4",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -4155,6 +4155,63 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2016-10-03T07:35:21+00:00"
+        },
+        {
+            "name": "stolz/laravel-html-tidy",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Stolz/laravel-html-tidy.git",
+                "reference": "e559ce9a3cbd8f690d27c0eabc6385bb50882cc1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Stolz/laravel-html-tidy/zipball/e559ce9a3cbd8f690d27c0eabc6385bb50882cc1",
+                "reference": "e559ce9a3cbd8f690d27c0eabc6385bb50882cc1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-tidy": "*",
+                "illuminate/http": "5.*",
+                "illuminate/support": "5.*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stolz\\HtmlTidy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stolz",
+                    "homepage": "https://github.com/Stolz/laravel-html-tidy",
+                    "role": "developer"
+                }
+            ],
+            "description": "HTML Tidy middleware for Laravel",
+            "keywords": [
+                "HTML5",
+                "HTMLtidy",
+                "Purifier",
+                "beautifier",
+                "filter",
+                "html",
+                "htmlpurifier",
+                "indent",
+                "laravel",
+                "markup",
+                "middleware",
+                "tidy"
+            ],
+            "time": "2015-12-28T03:55:57+00:00"
         },
         {
             "name": "theseer/tokenizer",
