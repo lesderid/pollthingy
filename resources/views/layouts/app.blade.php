@@ -6,7 +6,7 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link href="cutestrap.min.css" rel="stylesheet">
+        <link href="/cutestrap.min.css" rel="stylesheet">
         <style>
             input[type="text"] { padding-top: 0.8rem!important; }
             .no-top-padding { padding-top: 0!important; }
