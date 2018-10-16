@@ -17,17 +17,17 @@
         <br>
 
         @for ($i = 0; $i < 5; $i++)
-        <section class="grid grid--large">
-            <div class="textfield">
-                <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
-            </div>
-            <div class="textfield">
-                <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
-            </div>
-            <div class="textfield">
-                <input type="text" class="option" name="options[]" placeholder="Enter a poll option">
-            </div>
-        </section>
+            <section class="grid grid--large">
+                <div class="textfield">
+                    <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+                </div>
+                <div class="textfield">
+                    <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+                </div>
+                <div class="textfield">
+                    <input type="text" class="option" name="options[]" placeholder="Enter a poll option">
+                </div>
+            </section>
         @endfor
 
         <section class="grid grid--large">
