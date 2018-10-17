@@ -16,7 +16,7 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
                     <span>Voting URLs:</span>
                     <textarea class="copyarea" readonly>{{$poll->voting_codes()->get()->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n")}}</textarea>
                 @else
-                    <span>Poll URL: <a href="{{ action('PollController@view', ['poll' => $poll]) }}"{{ action('PollController@view', ['poll' => $poll]) }}></a></span>
+                    <span>Poll URL: <a href="{{ action('PollController@view', ['poll' => $poll]) }}">{{ action('PollController@view', ['poll' => $poll]) }}</a></span>
                 @endif
             </div>
         </section>
@@ -25,9 +25,9 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
     <section @if($new) class="some-top-margin" @endif>
         @if ($hasVoted)
                 @if (!$new || $poll->duplicate_vote_checking != 'codes')
-                    <span>You have already voted on this poll or need a code to vote.</span>
-
-                    <br>
+                    <div class="primary-box">
+                        <span>You have already voted on this poll or need a code to vote.</span>
+                    </div>
 
                     @if ($poll->results_visible)
                         <div class="some-top-margin">

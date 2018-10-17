@@ -92,11 +92,11 @@ class PollController extends Controller
 
     public function viewResults(Request $request, Poll $poll)
     {
-        if($poll->results_visible) {
+        $voted = $request->session()->pull('voted', false);
 
-        } else {
-
-        }
+        return view('view_poll_results')
+            ->with('poll', $poll)
+            ->with('voted', $voted);
     }
 
     private static function createPieChart(Poll $poll)
@@ -152,7 +152,6 @@ class PollController extends Controller
             $vote->poll_option_id = $option;
             $poll->votes()->save($vote);
         }
-
         DB::commit();
 
         if($poll->duplicate_vote_checking == 'cookies') {
@@ -162,8 +161,7 @@ class PollController extends Controller
             $code->save();
         }
 
-        //return redirect('PollController@viewResults', ['poll' => $poll]);
-        return view('view_poll')->with('poll', $poll)->with('new', false);
+        return redirect()->action('PollController@viewResults', ['poll' => $poll])->with('voted', true);
     }
 
     public function admin(Request $request, Poll $poll)

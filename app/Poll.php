@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Carbon\Carbon;
+
 class Poll extends Model
 {
     public $timestamps = false;
@@ -58,6 +60,6 @@ class Poll extends Model
 
     public function getResultsVisibleAttribute()
     {
-        return !$this->hide_results_until_closed || ($this->closes_at != null && $this->closes_at->isPast());
+        return !$this->hide_results_until_closed || ($this->closes_at != null && Carbon::parse($this->closes_at)->isPast());
     }
 }
