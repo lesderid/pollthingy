@@ -7,25 +7,34 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
 @endphp
 
 @section('content')
-    <form>
-        <section class="grid grid--large">
-            <div>
-                @foreach ($poll->options as $option)
-                    <label class="{{$type}} no-bottom-margin">
-                        <input type="{{$type}}" name="option" value="{{$option->id}}">
-                        <span class="{{$type}}__label">{{$option->text}}</span>
-                    </label>
+    @if($hasVoted)
+        <section>
+            <span>You have already voted on this poll.</span>
 
-                    <br>
-                @endforeach
-            </div>
-            <div>
-                <!-- TODO: Pie chart (http://lavacharts.com/#example-pie) -->
-            </div>
-        </section>
+            <br>
 
-        <section class="some-top-margin">
-                <input type="submit" class="btn" value="Submit vote">
+            @if($poll->results_visible)
+                <div class="some-top-margin">
+                    <span><a href="{{ action('PollController@viewResults', ['poll' => $poll]) }}">Results</a></span>
+                </div>
+            @endif
         </section>
-    </form>
+    @else
+        <form action"={{ action('PollController@vote', ['poll' => $poll]) }}" method="post">
+            @csrf
+
+            @foreach ($poll->options as $option)
+                <label class="{{$type}} no-bottom-margin">
+                    <input type="{{$type}}" name="options[]" value="{{$option->id}}">
+                    <span class="{{$type}}__label">{{$option->text}}</span>
+                </label>
+
+                <br>
+            @endforeach
+
+            <section class="some-top-margin">
+                    <input type="submit" class="btn" value="Submit vote">
+            </section>
+        </form>
+    @endif
 @endsection

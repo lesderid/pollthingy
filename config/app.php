@@ -167,6 +167,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Stolz\HtmlTidy\ServiceProvider::class,
+
     ],
 
     /*

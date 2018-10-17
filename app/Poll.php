@@ -42,7 +42,6 @@ class Poll extends Model
     public function voting_codes()
     {
         return $this->hasMany('App\PollVotingCode');
-
     }
 
     public function createVotingCodes($n)
@@ -55,5 +54,10 @@ class Poll extends Model
         $this->voting_codes()->saveMany($codes);
 
         return $codes;
+    }
+
+    public function getResultsVisibleAttribute()
+    {
+        return !$this->hide_results_until_closed || ($this->closes_at != null && $this->closes_at->isPast());
     }
 }

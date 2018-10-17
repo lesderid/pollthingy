@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Validator;
 
+use DB;
 use App\Poll;
+use App\PollVote;
+use App\PollVotingCode;
 
 class PollController extends Controller
 {
@@ -77,12 +80,87 @@ class PollController extends Controller
             //TODO: Implement JSON output
             return null;
         } else {
-            return view('view_poll')->with('poll', $poll)->with('new', $new);
+            return view('view_poll')
+                ->with('poll', $poll)
+                ->with('new', $new)
+                ->with('hasVoted', $this->hasVoted($request, $poll));
         }
+    }
+
+    public function viewResults(Request $request, Poll $poll)
+    {
+        if($poll->results_visible) {
+
+        } else {
+
+        }
+    }
+
+    private static function createPieChart(Poll $poll)
+    {
+        //TODO
+    }
+
+    public function hasVoted(Request $request, Poll $poll)
+    {
+        if($poll->duplicate_vote_checking == 'cookies') {
+            if($request->session()->exists($poll->id)) {
+                return true;
+            }
+        } else if($poll->duplicate_vote_checking == 'codes') {
+            $code = PollVotingCode::find($request->query('code'));
+
+            if($code == null || $code->used) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function vote(Request $request, Poll $poll)
     {
+        if($this->hasVoted($request, $poll)) {
+            return null;
+        }
+
+        if($poll->allow_multiple_answers) {
+            $validatedInput = $request->validate([
+                'options' => 'required|distinct',
+            ]);
+        } else {
+            $validatedInput = $request->validate([
+                'options' => 'required|distinct|min:1|max:1',
+            ]);
+        }
+
+        DB::beginTransaction();
+        foreach($validatedInput['options'] as $option)
+        {
+            //TODO: Properly display errors
+
+            if($poll->options()->find($option) == null) {
+                DB::rollBack();
+
+                return null;
+            }
+
+            $vote = new PollVote;
+            $vote->poll_option_id = $option;
+            $poll->votes()->save($vote);
+        }
+
+        DB::commit();
+
+        if($poll->duplicate_vote_checking == 'cookies') {
+            $request->session()->put($poll->id, null);
+        } else if($poll->duplicate_vote_checking == 'codes') {
+            $code->used = true;
+            $code->save();
+        }
+
+        //return redirect('PollController@viewResults', ['poll' => $poll]);
+        return view('view_poll')->with('poll', $poll)->with('new', false);
     }
 
     public function admin(Request $request, Poll $poll)
