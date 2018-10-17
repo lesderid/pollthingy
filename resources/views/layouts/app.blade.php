@@ -14,6 +14,7 @@
             .some-bottom-margin { margin-bottom: 0.5rem!important; }
             .some-bottom-padding { padding-bottom: 3rem!important; }
             .some-top-margin { margin-top: 2.0rem; }
+            .some-more-bottom-margin { margin-bottom: 2.0rem; }
             .inline-block { display: inline-block; }
 
             .primary-box {
