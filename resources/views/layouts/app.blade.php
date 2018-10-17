@@ -16,6 +16,26 @@
             .some-top-margin { margin-top: 2.0rem; }
             .inline-block { display: inline-block; }
 
+            .primary-box {
+                padding: 1rem 1rem 1rem 1rem!important;
+                border: 2px solid #e83fb8;
+            }
+
+            .copyarea {
+                user-select: all;
+                width: calc(100% - 0.4rem);
+                height: 15rem;
+                margin-top: 0.5rem;
+                border: 1px solid #7d7d7e;
+                font-family: "Roboto Mono", monospace;
+                font-size: 1rem;
+                padding: 0 0rem 0 0.4rem;
+            }
+
+            .copyarea:focus {
+                outline: 0;
+            }
+
             .ta-center {
                 margin-top: 1rem;
             }

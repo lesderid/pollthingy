@@ -18,6 +18,9 @@ class PollController extends Controller
         return view('create_poll');
     }
 
+    //TODO: Close polls
+    //TODO: Implement poll editing
+
     public function create(Request $request)
     {
         if($request->has('options')) {

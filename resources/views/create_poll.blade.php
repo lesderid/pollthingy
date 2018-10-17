@@ -16,19 +16,21 @@
 
         <br>
 
-        @for ($i = 0; $i < 5; $i++)
-            <section class="grid grid--large">
-                <div class="textfield">
-                    <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+        <section>
+            @for ($i = 0; $i < 5; $i++)
+                <div class="grid grid--large">
+                    <div class="textfield">
+                        <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+                    </div>
+                    <div class="textfield">
+                        <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
+                    </div>
+                    <div class="textfield">
+                        <input type="text" class="option" name="options[]" placeholder="Enter a poll option">
+                    </div>
                 </div>
-                <div class="textfield">
-                    <input type="text" class="option" name="options[]" placeholder="Enter a poll option" @if($i == 0 ) required @endif>
-                </div>
-                <div class="textfield">
-                    <input type="text" class="option" name="options[]" placeholder="Enter a poll option">
-                </div>
-            </section>
-        @endfor
+            @endfor
+        </section>
 
         <section class="grid grid--large">
             <div class="some-top-margin">
