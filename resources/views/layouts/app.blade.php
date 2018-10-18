@@ -16,6 +16,7 @@
             .some-top-margin { margin-top: 2.0rem; }
             .some-more-bottom-margin { margin-bottom: 2.0rem; }
             .inline-block { display: inline-block; }
+            .text-browser { display: none; }
 
             .primary-box {
                 padding: 1rem 1rem 1rem 1rem!important;
@@ -117,6 +118,8 @@
         <main class="dick wrapper-large no-top-padding some-bottom-padding">
             @yield('content')
         </main>
+
+        <div class="text-browser"><br></div>
 
         <footer>
             <p>Dates and times are UTC.</p>

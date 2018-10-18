@@ -10,6 +10,8 @@
 
         <section class="grid grid--large">
             <div class="textfield">
+                <span class="text-browser">Question:<br></span>
+
                 <input type="text" class="question" name="question" placeholder="Type your question here" required>
             </div>
         </section>
@@ -17,6 +19,8 @@
         <br>
 
         <section>
+            <span class="text-browser">Options:<br></span>
+
             @for ($i = 0; $i < 5; $i++)
                 <div class="grid grid--large">
                     <div class="textfield">
@@ -30,6 +34,8 @@
                     </div>
                 </div>
             @endfor
+
+            <div class="text-browser"><br></div>
         </section>
 
         <section class="grid grid--large">
@@ -56,6 +62,8 @@
                     <input type="text" name="admin_password" class="inline-text">
                     <span class="post-input-label"></span>
                 </label>
+
+                <div class="text-browser"><br></div>
             </div>
             <div class="some-top-margin">
                 <div class="some-bottom-margin">
@@ -80,8 +88,11 @@
                     <input type="number" min="2" max="1000" value="10" name="number_of_codes">
                     <span class="radio__label">codes</span>
                 </label>
+
             </div>
         </section>
+
+        <div class="text-browser"><br></div>
 
         <section>
                 <input type="submit" class="btn" value="Create poll">

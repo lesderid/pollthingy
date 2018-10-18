@@ -102,6 +102,18 @@ class PollController extends Controller
             ->with('voted', $voted);
     }
 
+    private static function imageToDataUri($image)
+    {
+        ob_start();
+
+        imagepng($image);
+        $dataUri = "data:image/png;base64," . base64_encode(ob_get_contents());
+
+        ob_end_clean();
+
+        return $dataUri;
+    }
+
     private function createPieChart(Poll $poll)
     {
         $voteCount = $poll->votes->count();
@@ -122,19 +134,21 @@ class PollController extends Controller
         $chartWidth = $width - 2 * $padding;
         $chartHeight = $height - 2 * $padding;
 
+        $colourSquareSize = 13;
+
         $pieChart = imagecreatetruecolor($width, $height);
-        imagefill($pieChart, 0, 0, imagecolorallocate($pieChart, 0xFF, 0xFF, 0xFF));
+        $transparent = imagecolorallocatealpha($pieChart, 0xFF, 0xFF, 0xFF, 0x7F);
+        imagefill($pieChart, 0, 0, $transparent);
+        imagesavealpha($pieChart, true);
         imageantialias($pieChart, true);
 
-        $primary = imagecolorallocate($pieChart, 0xE8, 0x3F, 0xB8);
-
-        $colours = [];
+        $colourSquareUris = [];
 
         $startDegrees = 0;
         $sortedOptions = $poll->options->sortByDesc(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count(); });
         $nonZeroOptions = $sortedOptions->filter(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count() > 0; })->values();
         debug($nonZeroOptions);
-        for($i = 0; $i < $poll->options->count(); $i++) {
+        for($i = 0; $i < $nonZeroOptions->count(); $i++) {
             $option = $nonZeroOptions[$i];
 
             //TODO: Fix gaps
@@ -147,27 +161,31 @@ class PollController extends Controller
                     * floor($i / count($baseColours)) / (floor($nonZeroOptions->count() / count($baseColours)) + 1);
             };
             $colour = imagecolorallocate($pieChart, $c(0), $c(1), $c(2));
-            $colours[$option->id] = '#' . dechex($c(0) << 16 | $c(1) << 8 | $c(2) << 0);
 
             debug([$option->text, [$startDegrees, $endDegrees], [$c(0), $c(1), $c(2)]]);
 
             imagefilledarc($pieChart, $width / 2, $height / 2, $chartWidth, $chartHeight, $startDegrees, $endDegrees, $colour, IMG_ARC_PIE);
 
+            $colourSquare = imagecreatetruecolor($colourSquareSize, $colourSquareSize);
+            $colourSquareColour = imagecolorallocate($colourSquare, $c(0), $c(1), $c(2));
+            imagefill($colourSquare, 0, 0, $colourSquareColour);
+            $colourSquareUris[$option->id] = PollController::imageToDataUri($colourSquare);
+
             $startDegrees = $endDegrees;
         }
 
-        debug($colours);
+        debug($colourSquareUris);
 
         $resized = imagecreatetruecolor($width / $supersamplingFactor, $height / $supersamplingFactor);
+        imagecolortransparent($resized, imagecolorallocatealpha($resized, 0, 0, 0, 0x7F));
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
         imagecopyresampled($resized, $pieChart, 0, 0, 0, 0, $width / $supersamplingFactor, $height / $supersamplingFactor, $width, $height);
         $pieChart = $resized;
 
-        ob_start();
-        imagepng($pieChart);
-        $dataUri = "data:image/png;base64," . base64_encode(ob_get_contents());
-        ob_end_clean();
+        $dataUri = PollController::imageToDataUri($pieChart);
 
-        Cache::put($poll->id, ['vote_count' => $voteCount, 'pie_chart' => $dataUri, 'colours' => $colours], now()->addDays(1));
+        Cache::put($poll->id, ['vote_count' => $voteCount, 'pie_chart' => $dataUri, 'colour_squares' => $colourSquareUris], now()->addDays(1));
     }
 
     public function hasVoted(Request $request, Poll $poll)

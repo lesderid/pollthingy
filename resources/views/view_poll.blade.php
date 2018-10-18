@@ -11,6 +11,8 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
         <section class="primary-box">
             <span>Your poll has been created!</span><br>
 
+            <div class="text-browser"><br></div>
+
             <div class="some-top-margin">
                 @if ($poll->duplicate_vote_checking == 'codes')
                     <span>Voting URLs:</span>
@@ -24,18 +26,22 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
 
     <section @if($new) class="some-top-margin" @endif>
         @if ($hasVoted)
-                @if (!$new || $poll->duplicate_vote_checking != 'codes')
-                    <div class="primary-box">
-                        <span>You have already voted on this poll or need a code to vote.</span>
-                    </div>
+            @if (!$new || $poll->duplicate_vote_checking != 'codes')
+                <div class="text-browser"><br></div>
 
-                    @if ($poll->results_visible)
-                        <div class="some-top-margin">
-                            <span><a href="{{ action('PollController@viewResults', ['poll' => $poll]) }}">Results</a></span>
-                        </div>
-                    @endif
+                <div class="primary-box">
+                    <span>You have already voted on this poll or need a code to vote.</span>
+                </div>
+
+                @if ($poll->results_visible)
+                    <div class="some-top-margin">
+                        <span><a href="{{ action('PollController@viewResults', ['poll' => $poll]) }}">Results</a></span>
+                    </div>
                 @endif
+            @endif
         @else
+            <div class="text-browser"><br></div>
+
             <form action="{{ action('PollController@vote', ['poll' => $poll]) }}" method="post">
                 @csrf
 
