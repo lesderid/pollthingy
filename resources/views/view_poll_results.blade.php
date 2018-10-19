@@ -38,10 +38,10 @@
                             <div>
                                 <span>{{ $option->text }}</span>
                                 <span class="text-browser">:</span>
-                                <span style="float:right">{{ $votes }} votes</span>
+                                <span class="float-right">{{ $votes }} votes</span>
                             </div>
                             <div>
-                                <div style="background-color:#e83fb8;height:2rem;width:{{ $total == 0 ? 0 : ($votes / $total * 100) }}%;" "{{ $total == 0 ? 0 : ($votes / $total * 100)}}% of votes">
+                                <div class="vote-bar" style="width:{{ $total == 0 ? 0 : ($votes / $total * 100) }}%;">
                                     <div class="text-browser">
                                         <span>{{ $total == 0 ? 0 : round($votes / $total * 100, 2) }}% of votes</span>
                                         <br><br>
@@ -60,14 +60,14 @@
 
                 @if ($total != 0)
                     <div class="primary-box">
-                        <img src="{{ $cache['pie_chart']}}" style="display:block;margin: 0 auto">
+                        <img src="{{ $cache['pie_chart']}}" class="centered-image">
 
                         <br>
 
                         <div class="text-browser"><br></div>
 
                         @foreach ($nonZeroOptions as $option)
-                            <img src="{{ $cache['colour_squares'][$option->id] }}" style="display:inline-block">
+                            <img src="{{ $cache['colour_squares'][$option->id] }}" class="inline-block">
                             <span>{{ $option->text }}</span>
 
                             <br>

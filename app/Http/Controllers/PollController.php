@@ -19,9 +19,6 @@ class PollController extends Controller
         return view('create_poll');
     }
 
-    //TODO: Close polls
-    //TODO: Implement poll editing
-
     public function create(Request $request)
     {
         if($request->has('options')) {
@@ -268,7 +265,7 @@ class PollController extends Controller
         $extraCodes = $request->session()->pull('extraCodes', null);
 
         if($poll->admin_password == null || $request->query('password') != $poll->admin_password) {
-            return redirect()->action('PollController@view', ['poll' => $poll]);
+            return redirect()->action('PollController@viewResults', ['poll' => $poll]);
         }
 
         return view('edit_poll')->with('poll', $poll)->with('changed', $changed)->with('extraCodes', $extraCodes);

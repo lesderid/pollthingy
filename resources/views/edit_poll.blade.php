@@ -100,7 +100,7 @@
                     <input type="hidden" name="automatically_close_poll" value="1">
                     <input type="hidden" name="automatically_close_poll_datetime" value="now">
 
-                    <input type="submit" class="btn" style="width:100%" value="Close poll now">
+                    <input type="submit" class="btn huge-button" value="Close poll now">
                 </div>
             </form>
         </section>

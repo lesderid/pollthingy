@@ -17,10 +17,22 @@
             .some-more-bottom-margin { margin-bottom: 2.0rem; }
             .inline-block { display: inline-block; }
             .text-browser { display: none; }
+            .huge-button { width: 100%; }
+            .float-right { float: right; }
 
             .primary-box {
                 padding: 1rem 1rem 1rem 1rem!important;
                 border: 2px solid #e83fb8;
+            }
+
+            .vote-bar {
+                background-color: #e83fb8;
+                height: 2rem;
+            }
+
+            img.centered-image {
+                display: block;
+                margin: 0 auto;
             }
 
             .copyarea {
