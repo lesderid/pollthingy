@@ -154,7 +154,7 @@
         <div class="text-browser"><br></div>
 
         <footer>
-            <p>Dates and times are UTC.</p>
+            <p>Dates and times are {{ Config::get('app.timezone') }}.</p>
         </footer>
     </body>
 </html>
