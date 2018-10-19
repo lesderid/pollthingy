@@ -11,7 +11,7 @@
         <div class="text-browser"><br></div>
     @endif
 
-    @if($poll->results_visible)
+    @if ($poll->results_visible)
         @php
             $sortedOptions = $poll->options->sortByDesc(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count(); });
             $nonZeroOptions = $sortedOptions->filter(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count() > 0; });

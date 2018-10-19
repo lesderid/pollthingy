@@ -87,7 +87,8 @@ class PollController extends Controller
             return view('view_poll')
                 ->with('poll', $poll)
                 ->with('new', $new)
-                ->with('hasVoted', $this->hasVoted($request, $poll));
+                ->with('hasVoted', $this->hasVoted($request, $poll))
+                ->with('code', $request->query('code', null));
         }
     }
 
@@ -208,7 +209,10 @@ class PollController extends Controller
     public function vote(Request $request, Poll $poll)
     {
         if($this->hasVoted($request, $poll)) {
-            return null;
+            return view('view_poll')
+                ->with('poll', $poll)
+                ->with('new', false)
+                ->with('hasVoted', true);
         }
 
         if($poll->allow_multiple_answers) {
@@ -224,12 +228,10 @@ class PollController extends Controller
         DB::beginTransaction();
         foreach($validatedInput['options'] as $option)
         {
-            //TODO: Properly display errors
-
             if($poll->options()->find($option) == null) {
                 DB::rollBack();
 
-                return null;
+                return redirect()->action('PollController@view', ['poll' => $poll]);
             }
 
             $vote = new PollVote;
@@ -241,6 +243,8 @@ class PollController extends Controller
         if($poll->duplicate_vote_checking == 'cookies') {
             $request->session()->put($poll->id, null);
         } else if($poll->duplicate_vote_checking == 'codes') {
+            $code = PollVotingCode::find($request->query('code'));
+
             $code->used = true;
             $code->save();
         }
@@ -250,9 +254,64 @@ class PollController extends Controller
 
     public function admin(Request $request, Poll $poll)
     {
+        $changed = $request->session()->pull('changed', false);
+        $extraCodes = $request->session()->pull('extra_codes', null);
+
+        if($poll->admin_password == null || $request->query('password') != $poll->admin_password) {
+            return redirect()->action('PollController@view', ['poll' => $poll]);
+        }
+
+        return view('edit_poll')->with('poll', $poll)->with('changed', $changed)->with('extra_codes', $extraCodes);
     }
 
     public function edit(Request $request, Poll $poll)
     {
+        if($request->has('extra_codes')) {
+            if($poll->duplicate_vote_checking != 'codes') {
+                return redirect()->action('PollController@view', ['poll' => $poll]);
+            }
+
+            $validatedInput = $request->validate([
+                'extra_codes' => 'integer|min:1'
+            ]);
+
+            $codes = $poll->createVotingCodes($validatedInput['extra_codes']);
+
+            return redirect()
+                ->action('PollController@admin', ['poll' => $poll, 'password' => $poll->admin_password])
+                ->with('extra_codes', $codes);
+        } else {
+            $request['allow_multiple_answers'] = $request->has('allow_multiple_answers');
+            $request['hide_results_until_closed'] = $request->has('hide_results_until_closed');
+            $request['automatically_close_poll'] = $request->has('automatically_close_poll');
+            $request['set_admin_password'] = $request->has('set_admin_password');
+
+            if($request['automatically_close_poll'] && $request['automatically_close_poll_datetime'] == 'now') {
+                //HACK: The validation rule 'date' doesn't accept 'now' as a valid date
+
+                $request['automatically_close_poll_datetime'] = Carbon::now()->format('Y-m-d\TH:i');
+            }
+
+            $validatedInput = $request->validate([
+                'hide_results_until_closed' => 'required|boolean',
+                'automatically_close_poll' => 'required|boolean',
+                'automatically_close_poll_datetime' => 'required_if:automatically_close_poll,true|date|after_or_equal:1 minute ago',
+                'set_admin_password' => 'required|boolean',
+                'admin_password' => 'required_if:set_admin_password,true|nullable|string',
+            ]);
+
+            $poll->hide_results_until_closed = $validatedInput['hide_results_until_closed'];
+            $poll->closes_at = $validatedInput['automatically_close_poll'] ? Carbon::parse($validatedInput['automatically_close_poll_datetime']) : null;
+            $poll->admin_password = $validatedInput['set_admin_password'] ? $validatedInput['admin_password'] : null;
+            $poll->save();
+
+            if($poll->closed || $poll->admin_password == null) {
+                return redirect()->action('PollController@viewResults', ['poll' => $poll]);
+            } else {
+                return redirect()
+                    ->action('PollController@admin', ['poll' => $poll, 'password' => $poll->admin_password])
+                    ->with('changed', true);
+            }
+        }
     }
 }

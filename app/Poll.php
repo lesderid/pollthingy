@@ -58,8 +58,14 @@ class Poll extends Model
         return $codes;
     }
 
+    public function getClosedAttribute()
+    {
+        return ($this->closes_at != null && Carbon::parse($this->closes_at)->isPast()) ||
+            ($this->duplicate_vote_checking == 'codes' && $this->voting_codes()->where('used', false)->count() == 0);
+    }
+
     public function getResultsVisibleAttribute()
     {
-        return !$this->hide_results_until_closed || ($this->closes_at != null && Carbon::parse($this->closes_at)->isPast());
+        return !$this->hide_results_until_closed || $this->closed;
     }
 }

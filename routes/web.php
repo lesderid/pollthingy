@@ -20,11 +20,9 @@ Route::post('/poll', 'PollController@create');
 
 Route::get('/poll/{poll}', 'PollController@view');
 
-//TODO: Add admin GET route
+Route::get('/poll/{poll}/edit', 'PollController@admin');
 Route::patch('/poll/{poll}', 'PollController@edit');
-
-Route::get('/poll/{poll}/results', 'PollController@viewResults');
 
 Route::post('/poll/{poll}/vote', 'PollController@vote');
 
-Route::get('/poll/{poll}/edit', 'PollController@admin');
+Route::get('/poll/{poll}/results', 'PollController@viewResults');

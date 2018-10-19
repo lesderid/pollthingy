@@ -60,7 +60,6 @@
                     <input type="checkbox" name="set_admin_password">
                     <span class="checkbox__label">Set an admin password: </span>
                     <input type="text" name="admin_password" class="inline-text">
-                    <span class="post-input-label"></span>
                 </label>
 
                 <div class="text-browser"><br></div>
@@ -88,7 +87,6 @@
                     <input type="number" min="2" max="1000" value="10" name="number_of_codes">
                     <span class="radio__label">codes</span>
                 </label>
-
             </div>
         </section>
 

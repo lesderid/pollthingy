@@ -67,6 +67,26 @@
                 outline: 0;
             }
 
+            .free-number {
+                display: inline-block;
+                margin-bottom: 0;
+                padding: 0 1rem 0 0;
+                position: relative;
+            }
+
+            .free-number > input[type="number"] {
+                display: inline-block;
+                border: 1px solid #7d7d7e;
+                margin-top: 0.5rem;
+                margin-left: 0;
+            }
+
+            .free-number > input[type="number"]:focus {
+                border-color: #e83fb8;
+                box-shadow: 0 1px 2px 0 #dededf inset;
+                outline: 0;
+            }
+
             input[type="datetime-local"] {
                 margin-top: 0.2rem;
                 margin-bottom: 0.2rem;

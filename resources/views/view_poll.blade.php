@@ -13,6 +13,14 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
 
             <div class="text-browser"><br></div>
 
+            @if ($poll->admin_password != null)
+                <div class="some-top-margin">
+                    <span>Admin URL: <a href="{{ action('PollController@admin', ['poll' => $poll, 'password' => $poll->admin_password]) }}">{{ action('PollController@admin', ['poll' => $poll, 'password' => $poll->admin_password]) }}</a></span>
+                </div>
+
+                <div class="text-browser"><br></div>
+            @endif
+
             <div class="some-top-margin">
                 @if ($poll->duplicate_vote_checking == 'codes')
                     <span>Voting URLs:</span>
@@ -42,7 +50,12 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
         @else
             <div class="text-browser"><br></div>
 
-            <form action="{{ action('PollController@vote', ['poll' => $poll]) }}" method="post">
+            @if ($code != null)
+                <form action="{{ action('PollController@vote', ['poll' => $poll, 'code' => $code]) }}" method="post">
+            @else
+                <form action="{{ action('PollController@vote', ['poll' => $poll]) }}" method="post">
+            @endif
+
                 @csrf
 
                 @foreach ($poll->options as $option)
