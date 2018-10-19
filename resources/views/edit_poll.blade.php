@@ -8,16 +8,13 @@
             <span>The poll is closed and can no longer be edited.</span>
         </div>
     @else
-        @if ($changed || $extra_codes != null)
-            @php (debug($changed))
-            @php (debug($extra_codes))
-
+        @if ($changed || $extraCodes != null)
             <div class="primary-box">
                 @if ($changed)
                     <span>Your changes have been saved.</span>
-                @elseif ($extra_codes != null)
+                @elseif ($extraCodes != null)
                     <span>Your extra voting URLs have been generated:</span>
-                    <textarea class="copyarea" readonly>{{collect($extra_codes)->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n")}}</textarea>
+                    <textarea class="copyarea" readonly>{{collect($extraCodes)->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n")}}</textarea>
                 @endif
             </div>
 

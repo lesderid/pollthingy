@@ -72,6 +72,10 @@ class PollController extends Controller
 
     public function view(Request $request, Poll $poll)
     {
+        if($poll->closed) {
+            return redirect()->action('PollController@viewResults', ['poll' => $poll])->with('alreadyClosed', true);
+        }
+
         $new = $request->session()->pull('new', false);
 
         if($request->format() == 'json') {
@@ -95,12 +99,14 @@ class PollController extends Controller
     public function viewResults(Request $request, Poll $poll)
     {
         $voted = $request->session()->pull('voted', false);
+        $alreadyClosed = $request->session()->pull('alreadyClosed', false);
 
         $this->createPieChart($poll);
 
         return view('view_poll_results')
             ->with('poll', $poll)
-            ->with('voted', $voted);
+            ->with('voted', $voted)
+            ->with('alreadyClosed', $alreadyClosed);
     }
 
     private static function imageToDataUri($image)
@@ -208,6 +214,10 @@ class PollController extends Controller
 
     public function vote(Request $request, Poll $poll)
     {
+        if($poll->closed) {
+            return redirect()->action('PollController@viewResults', ['poll' => $poll])->with('alreadyClosed', true);
+        }
+
         if($this->hasVoted($request, $poll)) {
             return view('view_poll')
                 ->with('poll', $poll)
@@ -255,13 +265,13 @@ class PollController extends Controller
     public function admin(Request $request, Poll $poll)
     {
         $changed = $request->session()->pull('changed', false);
-        $extraCodes = $request->session()->pull('extra_codes', null);
+        $extraCodes = $request->session()->pull('extraCodes', null);
 
         if($poll->admin_password == null || $request->query('password') != $poll->admin_password) {
             return redirect()->action('PollController@view', ['poll' => $poll]);
         }
 
-        return view('edit_poll')->with('poll', $poll)->with('changed', $changed)->with('extra_codes', $extraCodes);
+        return view('edit_poll')->with('poll', $poll)->with('changed', $changed)->with('extraCodes', $extraCodes);
     }
 
     public function edit(Request $request, Poll $poll)
@@ -279,7 +289,7 @@ class PollController extends Controller
 
             return redirect()
                 ->action('PollController@admin', ['poll' => $poll, 'password' => $poll->admin_password])
-                ->with('extra_codes', $codes);
+                ->with('extraCodes', $codes);
         } else {
             $request['allow_multiple_answers'] = $request->has('allow_multiple_answers');
             $request['hide_results_until_closed'] = $request->has('hide_results_until_closed');

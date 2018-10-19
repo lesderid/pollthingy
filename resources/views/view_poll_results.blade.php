@@ -9,6 +9,12 @@
         </section>
 
         <div class="text-browser"><br></div>
+    @elseif ($alreadyClosed)
+        <section class="primary-box">
+            <span>The poll is already closed.</span><br>
+        </section>
+
+        <div class="text-browser"><br></div>
     @endif
 
     @if ($poll->results_visible)
