@@ -291,22 +291,21 @@ class PollController extends Controller
             return redirect()
                 ->action('PollController@admin', ['poll' => $poll, 'password' => $poll->admin_password])
                 ->with('extraCodes', $codes);
+        } else if($request->has('close_now')) {
+            $poll->closes_at = Carbon::now();
+            $poll->save();
+
+            return redirect()->action('PollController@viewResults', ['poll' => $poll]);
         } else {
             $request['allow_multiple_answers'] = $request->has('allow_multiple_answers');
             $request['hide_results_until_closed'] = $request->has('hide_results_until_closed');
             $request['automatically_close_poll'] = $request->has('automatically_close_poll');
             $request['set_admin_password'] = $request->has('set_admin_password');
 
-            if($request['automatically_close_poll'] && $request['automatically_close_poll_datetime'] == 'now') {
-                //HACK: The validation rule 'date' doesn't accept 'now' as a valid date
-
-                $request['automatically_close_poll_datetime'] = Carbon::now()->format('Y-m-d\TH:i');
-            }
-
             $validatedInput = $request->validate([
                 'hide_results_until_closed' => 'required|boolean',
                 'automatically_close_poll' => 'required|boolean',
-                'automatically_close_poll_datetime' => 'required_if:automatically_close_poll,true|date|after_or_equal:1 minute ago',
+                'automatically_close_poll_datetime' => 'required_if:automatically_close_poll,true|date|after:now',
                 'set_admin_password' => 'required|boolean',
                 'admin_password' => 'required_if:set_admin_password,true|nullable|string',
             ]);

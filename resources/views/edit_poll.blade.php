@@ -88,17 +88,7 @@
                 @csrf
 
                 <div class="some-top-margin">
-                    @if ($poll->hide_results_until_closed)
-                        <input type="hidden" name="hide_results_until_closed" value="1">
-                    @endif
-
-                    @if ($poll->admin_password != null)
-                        <input type="hidden" name="set_admin_password" value="1">
-                        <input type="hidden" name="admin_password" value="{{ $poll->admin_password }}">
-                    @endif
-
-                    <input type="hidden" name="automatically_close_poll" value="1">
-                    <input type="hidden" name="automatically_close_poll_datetime" value="now">
+                    <input type="hidden" name="close_now" value="1">
 
                     <input type="submit" class="btn huge-button" value="Close poll now">
                 </div>
