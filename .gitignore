@@ -13,3 +13,4 @@ yarn-error.log
 .env
 .phpunit.result.cache
 /storage/debugbar
+/resources/views/footer.blade.php

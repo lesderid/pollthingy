@@ -21,6 +21,8 @@
 
         <footer>
             <p>Dates and times are {{ Config::get('app.timezone') }}.</p>
+
+            @includeIf('footer')
         </footer>
     </body>
 </html>
