@@ -273,6 +273,10 @@ class PollController extends Controller
 
     public function edit(Request $request, Poll $poll)
     {
+        if($poll->admin_password == null || $request->query('password') != $poll->admin_password) {
+            return redirect()->action('PollController@viewResults', ['poll' => $poll]);
+        }
+
         if($request->has('extra_codes')) {
             if($poll->duplicate_vote_checking != 'codes') {
                 return redirect()->action('PollController@view', ['poll' => $poll]);

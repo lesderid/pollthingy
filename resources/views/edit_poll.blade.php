@@ -23,7 +23,7 @@
 
         <section class="grid grid--large">
             <div class="some-top-margin">
-                <form action="{{ action('PollController@edit', ['poll' => $poll, 'password' => $poll->password]) }}" method="post">
+                <form action="{{ action('PollController@edit', ['poll' => $poll, 'password' => $poll->admin_password]) }}" method="post">
                     @method('PATCH')
 
                     @csrf
@@ -58,7 +58,7 @@
 
             @if ($poll->duplicate_vote_checking == 'codes')
                 <div class="some-top-margin">
-                    <form action="{{ action('PollController@edit', ['poll' => $poll, 'password' => $poll->password]) }}" method="post">
+                    <form action="{{ action('PollController@edit', ['poll' => $poll, 'password' => $poll->admin_password]) }}" method="post">
                         @method('PATCH')
 
                         @csrf
@@ -82,7 +82,7 @@
         <div class="text-browser"><br></div>
 
         <section>
-            <form action="{{ action('PollController@edit', ['poll' => $poll, 'password' => $poll->password]) }}" method="post">
+            <form action="{{ action('PollController@edit', ['poll' => $poll, 'password' => $poll->admin_password]) }}" method="post">
                 @method('PATCH')
 
                 @csrf
