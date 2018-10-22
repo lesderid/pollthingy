@@ -216,10 +216,7 @@ class PollController extends Controller
         }
 
         if($this->hasVoted($request, $poll)) {
-            return view('view_poll')
-                ->with('poll', $poll)
-                ->with('new', false)
-                ->with('hasVoted', true);
+            return redirect()->action('PollController@view', ['poll' => $poll]);
         }
 
         if($poll->allow_multiple_answers) {
