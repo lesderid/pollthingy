@@ -3,7 +3,7 @@ A simple (straw) poll web application made with [Laravel 5.7](https://laravel.co
 
 ## Features
   * Many useful options (multiple answers, automatic closing of poll at a chosen date, hiding results until poll is closed, etc.)
-  * Optional duplication checking via generated voting codes
+  * Optional duplication checking via generated single-use voting codes
   * Sane endpoints/'RESTful API' (with optional JSON output via HTTP Accept header)
   * Simple CSS based on [Cutestrap](https://cutestrap.com)
   * No JS is used
