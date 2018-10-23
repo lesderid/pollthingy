@@ -275,7 +275,6 @@ class PollController extends Controller
             $vote->poll_option_id = $option;
             $poll->votes()->save($vote);
         }
-        DB::commit();
 
         if($poll->duplicate_vote_checking == 'cookies') {
             $request->session()->put($poll->id, null);
@@ -285,6 +284,7 @@ class PollController extends Controller
             $code->used = true;
             $code->save();
         }
+        DB::commit();
 
         return redirect()->action('PollController@viewResults', ['poll' => $poll])->with('voted', true);
     }
