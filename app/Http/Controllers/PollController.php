@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Validator;
 use DB;
 use Cache;
+use Config;
 
 use App\Poll;
 use App\PollVote;
@@ -16,7 +17,11 @@ class PollController extends Controller
 {
     public function __invoke(Request $request)
     {
-        return view('create_poll');
+        if($request->format() == 'json') {
+            return response()->json(['timezone' => Config::get('app.timezone')]);
+        } else {
+            return view('create_poll');
+        }
     }
 
     public function create(Request $request)
@@ -76,14 +81,19 @@ class PollController extends Controller
         $new = $request->session()->pull('new', false);
 
         if($request->format() == 'json') {
-            if($new) {
+            $data = [
+                'id' => $poll->id,
+                'new' => $new,
+                'question' => $poll->question,
+                'options' => $poll->options->map(function($o) { return $o->makeHidden('poll_id'); }),
+                'multipleAnswersAllowed' => $poll->allow_multiple_answers
+            ];
 
-            } else {
-
+            if($new && $poll->duplicate_vote_checking == 'codes') {
+                $data['votingUrls'] = $poll->voting_codes()->get()->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); });
             }
 
-            //TODO: Implement JSON output
-            return null;
+            return response()->json($data);
         } else {
             return view('view_poll')
                 ->with('poll', $poll)
@@ -100,10 +110,33 @@ class PollController extends Controller
 
         $this->createPieChart($poll);
 
-        return view('view_poll_results')
-            ->with('poll', $poll)
-            ->with('voted', $voted)
-            ->with('alreadyClosed', $alreadyClosed);
+        if($request->format() == 'json') {
+            $data = [
+                'id' => $poll->id,
+                'voted' => $voted,
+                'alreadyClosed' => $alreadyClosed,
+                'resultsVisible' => $poll->results_visible
+            ];
+
+            if($poll->results_visible) {
+                $data['results'] = $poll->options->map(function($o) {
+                    $array = $o->makeHidden('poll')->makeHidden('poll_id')->append('vote_count')->toArray();
+
+                    //I really shouldn't have to do this...
+                    $array['voteCount'] = $array['vote_count'];
+                    unset($array['vote_count']);
+
+                    return $array;
+                });
+            }
+
+            return response()->json($data);
+        } else {
+            return view('view_poll_results')
+                ->with('poll', $poll)
+                ->with('voted', $voted)
+                ->with('alreadyClosed', $alreadyClosed);
+        }
     }
 
     private static function imageToDataUri($image)
@@ -149,14 +182,14 @@ class PollController extends Controller
         $colourSquareUris = [];
 
         $startDegrees = 0;
-        $sortedOptions = $poll->options->sortByDesc(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count(); });
-        $nonZeroOptions = $sortedOptions->filter(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count() > 0; })->values();
+        $sortedOptions = $poll->options->sortByDesc(function($option) { return $option->vote_count; });
+        $nonZeroOptions = $sortedOptions->filter(function($option) { return $option->vote_count > 0; })->values();
         debug($nonZeroOptions);
         for($i = 0; $i < $nonZeroOptions->count(); $i++) {
             $option = $nonZeroOptions[$i];
 
             //TODO: Fix gaps
-            $degrees = round($poll->votes->where('poll_option_id', $option->id)->count() / $voteCount * 360);
+            $degrees = round($option->vote_count / $voteCount * 360);
             $endDegrees = min($startDegrees + $degrees, 360);
 
             $c = function($j) use($i, $baseColours, $nonZeroOptions) {
@@ -265,7 +298,15 @@ class PollController extends Controller
             return redirect()->action('PollController@viewResults', ['poll' => $poll]);
         }
 
-        return view('edit_poll')->with('poll', $poll)->with('changed', $changed)->with('extraCodes', $extraCodes);
+        if($request->format() == 'json') {
+            return response()->json([
+                "id" => $poll->id,
+                "changed" => $changed,
+                "extraVotingUrls" => collect($extraCodes)->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })
+            ]);
+        } else {
+            return view('edit_poll')->with('poll', $poll)->with('changed', $changed)->with('extraCodes', $extraCodes);
+        }
     }
 
     public function edit(Request $request, Poll $poll)

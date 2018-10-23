@@ -24,7 +24,7 @@ $type = $poll->allow_multiple_answers ? "checkbox" : "radio";
             <div class="some-top-margin">
                 @if ($poll->duplicate_vote_checking == 'codes')
                     <span>Voting URLs:</span>
-                    <textarea class="copyarea" readonly>{{$poll->voting_codes()->get()->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n")}}</textarea>
+                    <textarea class="copyarea" readonly>{{ $poll->voting_codes()->get()->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n") }}</textarea>
                 @else
                     <span>Poll URL: <a href="{{ action('PollController@view', ['poll' => $poll]) }}">{{ action('PollController@view', ['poll' => $poll]) }}</a></span>
                 @endif

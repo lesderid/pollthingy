@@ -14,7 +14,7 @@
                     <span>Your changes have been saved.</span>
                 @elseif ($extraCodes != null)
                     <span>Your extra voting URLs have been generated:</span>
-                    <textarea class="copyarea" readonly>{{collect($extraCodes)->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n")}}</textarea>
+                    <textarea class="copyarea" readonly>{{ collect($extraCodes)->map(function($c) use($poll) { return action('PollController@view', ['poll' => $poll, 'code' => $c]); })->implode("\n") }}</textarea>
                 @endif
             </div>
 

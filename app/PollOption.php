@@ -14,4 +14,9 @@ class PollOption extends Model
     {
         return $this->belongsTo('App\Poll');
     }
+
+    public function getVoteCountAttribute()
+    {
+        return $this->poll->votes->where('poll_option_id', $this->id)->count();
+    }
 }

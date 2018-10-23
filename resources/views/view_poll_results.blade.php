@@ -19,8 +19,8 @@
 
     @if ($poll->results_visible)
         @php
-            $sortedOptions = $poll->options->sortByDesc(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count(); });
-            $nonZeroOptions = $sortedOptions->filter(function($option) use($poll) { return $poll->votes->where('poll_option_id', $option->id)->count() > 0; });
+            $sortedOptions = $poll->options->sortByDesc(function($option) { return $option->vote_count; });
+            $nonZeroOptions = $sortedOptions->filter(function($option) { return $option->vote_count > 0; });
 
             $cache = Cache::get($poll->id);
 
